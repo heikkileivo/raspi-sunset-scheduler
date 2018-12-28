@@ -1,104 +1,80 @@
 #!/usr/bin/env python
 import logging
-from datetime import datetime, timedelta
-import julian
-from math import floor, degrees, radians, sin, cos, asin, acos
-from pytz import timezone
-import tzlocal
+import os, sys
+import argparse
+import shutil
+from datetime import datetime
+from calc import Suncalc, MODES
 
 LOG_FORMAT="%(message)s"
-# Equivalent Julian year of Julian days for 2000, 1, 1.5.
-EPOCH = 2451545.0   
-#Fractional Julian Day for leap seconds and terrestrial time.
-LEAP = 0.0008       
-from settings import LONGITUDE
-from settings import LATITUDE
+
 logger = logging.getLogger(__name__)
 
-def julian_day(dt:datetime) -> float:
+def init():
     """
-    Return current julian day.
+    Create settings module if it does not exist.
     """
-    j = julian.to_jd(dt, fmt='jd')
+    path = os.path.join(sys.path[0], 'settings.py')
+    if os.path.isfile(path) == False:
+        template = os.path.join(sys.path[0], 'sample_settings.py')
+        shutil.copyfile(template, path)
+        print("Created settings.py module from sample.")
 
-    return floor(j) - EPOCH + LEAP 
+def run_commands(args):
+    """
+    Output or execute commands as specified in settings.
+    """
+    init()
+    from settings import LATITUDE, LONGITUDE
+    from settings import commands, MODE
+    s = Suncalc(LATITUDE, LONGITUDE, MODE)
 
-def mean_solar_noon(dt:datetime) -> float:
-    """
-    Return julian day of mean solar noon.
-    """
-    n = julian_day(dt)
-    return n - LONGITUDE/360.0
+    local_dt = datetime.now() 
+    value = s.local_value(local_dt)
+    for c in commands(value):
+        if args.execute: 
+            os.system(c)
+        else:
+            print(c)
 
-def solar_mean_anomaly(dt:datetime) -> float:
+def show_values(args):
     """
-    Return solar mean anomaly in degrees.
+    Output values for local sunrise and sunset.
     """
-    jstar = mean_solar_noon(dt)
-    return (357.5291 + 0.98560028 * jstar) % 360.0
- 
-def equation_of_center(dt:datetime) -> float:
-    """
-    Return equation of center in degrees.
-    """
-    m = radians(solar_mean_anomaly(dt))
-    return 1.9148*sin(m) + 0.02*sin(2*m) + 0.0003*sin(3*m)
+    init()
+    from settings import LATITUDE, LONGITUDE
+    s = Suncalc(LATITUDE, LONGITUDE, args.mode)
+    local_dt = datetime.now()
+    value = s.local_value(local_dt)
 
-def ecliptic_longitude(dt:datetime) -> float:
-    """
-    Return ecliptic longitude in degrees.
-    """
-    m = solar_mean_anomaly(dt)
-    c = equation_of_center(dt)
-    return (m + c + 180.0 + 102.9372) % 360.0
-
-def solar_transit(dt:datetime) -> float:
-    """
-    Return solar transit as julian date.
-    """
-    jstar = mean_solar_noon(dt)
-    m = radians(solar_mean_anomaly(dt))
-    l = radians(ecliptic_longitude(dt)) 
-
-    return EPOCH + jstar + 0.0053*sin(m) - 0.0069*sin(2*l)
-
-def declination_of_sun(dt:datetime) -> float:
-    """
-    Return declination of sun in degrees.
-    """
-    l = ecliptic_longitude(dt)
-    d = sin(radians(l)) * sin(radians(23.44))
-    return degrees(asin(d))
-
-def hour_angle(dt:datetime) -> float:
-    """
-    Return hour angle in degrees.
-    """
-    d = radians(declination_of_sun(dt))
-    phi = radians(LATITUDE)
-    w = (sin(radians(-0.83))-sin(phi)*sin(d))/(cos(phi)*cos(d))    
-    return degrees(acos(w))
-
-def sunset(dt:datetime) -> float:
-    """
-    Return julian date for sunset at specific date.
-    """
-    j = solar_transit(dt)
-    return j + (hour_angle(dt) / 360.0)
+    print("Local {} is at {}".format(args.mode, value))
 
 def main():
-    local_tz = tzlocal.get_localzone()
-    dt = datetime.now()
-    local = local_tz.localize(dt)
-    utc = local.astimezone(timezone('UTC'))
-    logger.info("Local={}, utc={}".format(local,utc))
-    s = sunset(utc)
-    utc = timezone('UTC').localize(julian.from_jd(s))
-    local = utc.astimezone(local_tz)
+    parser = argparse.ArgumentParser("Sunset Calculator")
+    subparsers = parser.add_subparsers(help="Action to perfom.")
+    subparser = subparsers.add_parser("show-value", 
+        help="Show values for selected event.")
+    subparser.add_argument('--mode', required=True, type=str, choices=MODES,
+        help="Defines event to be observed.")
 
-    logger.info("Utc={}, Local={}".format(utc,local))
+    subparser.set_defaults(func=show_values)
+    subparser = subparsers.add_parser("run-commands", 
+        help="Run commands specified in settings.")
+    subparser.set_defaults(func=run_commands)
+    subparser.add_argument('--execute', type=bool, 
+        default=False, help="If set to True, execute commands using os.system.")
+    args = parser.parse_args()
 
+    if hasattr(args, 'func') == False:
+        parser.print_help()
+        return
+    try:
+        args.func(args)
+    except:
+        e = sys.exc_info()
+        logger.error("Operation failed: {0}".format(e[1]))
 
+    
 if __name__=='__main__':
     logging.basicConfig(format=LOG_FORMAT, level=logging.DEBUG)
     main()
