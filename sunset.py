@@ -37,27 +37,30 @@ def run_commands(args):
         else:
             print(c)
 
-def show_values(args):
+def show_time(args):
     """
-    Output values for local sunrise and sunset.
+    Output fime for selected event.
     """
     init()
     from settings import LATITUDE, LONGITUDE
-    s = Suncalc(LATITUDE, LONGITUDE, args.mode)
+    s = Suncalc(LATITUDE, LONGITUDE, args.event)
     local_dt = datetime.now()
     value = s.local_value(local_dt)
 
-    print("Local {} is at {}".format(args.mode, value))
+    print("Local {} is at {}".format(args.event, value))
 
 def main():
     parser = argparse.ArgumentParser("Sunset Calculator")
     subparsers = parser.add_subparsers(help="Action to perfom.")
-    subparser = subparsers.add_parser("show-value", 
-        help="Show values for selected event.")
-    subparser.add_argument('--mode', required=True, type=str, choices=MODES,
-        help="Defines event to be observed.")
 
-    subparser.set_defaults(func=show_values)
+    # Define parser for show-time action
+    subparser = subparsers.add_parser("show-time", 
+        help="Show time for specifi event.")
+    subparser.add_argument('--event', required=True, type=str, choices=MODES,
+        help="Defines event to be observed.")
+    subparser.set_defaults(func=show_time)
+
+    # Define parser for run-commands action
     subparser = subparsers.add_parser("run-commands", 
         help="Run commands specified in settings.")
     subparser.set_defaults(func=run_commands)
