@@ -4,7 +4,7 @@ import os, sys
 import argparse
 import shutil
 from datetime import datetime
-from calc import Suncalc, MODES
+from calc import Suncalc, EVENTS
 
 LOG_FORMAT="%(message)s"
 
@@ -26,8 +26,8 @@ def run_commands(args):
     """
     init()
     from settings import LATITUDE, LONGITUDE
-    from settings import commands, MODE
-    s = Suncalc(LATITUDE, LONGITUDE, MODE)
+    from settings import commands, EVENT
+    s = Suncalc(LATITUDE, LONGITUDE, EVENT)
 
     local_dt = datetime.now() 
     value = s.local_value(local_dt)
@@ -56,7 +56,7 @@ def main():
     # Define parser for show-time action
     subparser = subparsers.add_parser("show-time", 
         help="Show time for specifi event.")
-    subparser.add_argument('--event', required=True, type=str, choices=MODES,
+    subparser.add_argument('--event', required=True, type=str, choices=EVENTS,
         help="Defines event to be observed.")
     subparser.set_defaults(func=show_time)
 

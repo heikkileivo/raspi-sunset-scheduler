@@ -8,10 +8,10 @@ from pytz import timezone
 import tzlocal
 import argparse
 
-MODE_NOON = 'noon'
-MODE_SUNSET = 'sunset'
-MODE_SUNRISE = 'sunrise'
-MODES = [MODE_SUNRISE, MODE_NOON, MODE_SUNSET]
+EVENT_NOON = 'noon'
+EVENT_SUNSET = 'sunset'
+EVENT_SUNRISE = 'sunrise'
+EVENTS = [EVENT_SUNRISE, EVENT_NOON, EVENT_SUNSET]
 
 # Equivalent Julian year of Julian days for 2000, 1, 1.5.
 EPOCH = 2451545.0   
@@ -59,13 +59,13 @@ class Suncalc(object):
     the Wikipedia page.
     See: https://en.m.wikipedia.org/wiki/Sunrise_equation
     """
-    def __init__(self, latitude, longitude, mode):
+    def __init__(self, latitude, longitude, event):
        """
        Create instance of sunset calculator.
        """
        self._latitude = latitude
        self._longitude = longitude
-       self._mode = mode
+       self._event = event
 
     def _calculate_current_julian_day(self, dt:datetime) -> float:
         """
@@ -154,9 +154,9 @@ class Suncalc(object):
         return j 
 
     def local_value(self, dt:datetime) -> datetime:
-        if self._mode == MODE_SUNRISE:
+        if self._event == EVENT_SUNRISE:
             return self.local_sunrise(dt)
-        elif self._mode == MODE_SUNSET:
+        elif self._event == EVENT_SUNSET:
             return self.local_sunset(dt)
         else:
             return self.local_noon(dt)
@@ -164,9 +164,3 @@ class Suncalc(object):
     local_sunset = _to_local(sunset)
     local_sunrise = _to_local(sunrise)
     local_noon = _to_local(noon)
-
-
-if __name__=='__main__':
-    s = Suncalc(0,0)
-    print(s.local_sunset(datetime.now()))
-    print(s.local_sunrise(datetime.now()))

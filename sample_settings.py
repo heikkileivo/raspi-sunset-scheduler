@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from calc import MODE_SUNRISE, MODE_NOON, MODE_SUNSET 
+from calc import EVENT_SUNRISE, EVENT_NOON, EVENT_SUNSET 
 
 # Define your target path here
 TARGET_DIRECTORY='/path/to/your/photos/'
@@ -10,7 +10,7 @@ COMMAND = "echo \"raspistill -o {0:s}/{1:%Y}{1:%m}{1:%d}-{2}.jpg -t 1 -n\" | at 
 LONGITUDE=25.0
 LATITUDE=60.0
 # Define event to be observed
-MODE = MODE_SUNSET
+EVENT = EVENT_SUNSET
 # Define settings for generating commands
 START_OFFSET_MINUTES = -10
 END_OFFSET_MINUTES = 10
