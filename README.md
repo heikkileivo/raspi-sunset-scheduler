@@ -64,7 +64,7 @@ Create a new virtual environment for sunset.py using __python 3__ and activate i
 ```bash
 
 ~/sunsetcalculator $ virtualenv -p python3 ~/virtualenvs/sunset
-~/sunsetcalculator $ ~/virtualenvs/sunset/bin/activate
+~/sunsetcalculator $ source ~/virtualenvs/sunset/bin/activate
 (sunset) ~/sunsetcalculator $
 ```
 
