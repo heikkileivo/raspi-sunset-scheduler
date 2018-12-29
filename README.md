@@ -1,5 +1,5 @@
 # Sunset Calculator
-The intent of this project is to schedule Raspberry Pi to take photos of sunset every day so that sun is always at specific elevation from the horizon. When executed, the script schedules taking photos for today's sunrise, noon or sunset using _at_ command. Actual behavior is defined in settings. The [sample settings](https://bitbucket.org/SirHegel77/sunsetcalculator/src/master/sample_settings.py) show how to use this script with [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md), but you can easily modify the settings to use some other tool to take the pictures.
+The intent of this project is to schedule Raspberry Pi to take photos of sunset every day so that sun is always at specific elevation from the horizon. When executed, the script schedules taking photos for today's sunrise, noon or sunset using _at_ command. Actual behavior is defined in settings. The [sample settings](https://github.com/heikkileivo/sunset/blob/master/sample_settings.py) show how to use this script with [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md), but you can easily modify the settings to use some other tool to take the pictures.
 ## Quick instructions
 Read the detailed instructions below to set up the script before using. To show help for command line, run the script with -h parameter: `./sunset.py -h`. To show time for today's sunrise, start the script with `show-time` command: `./sunset.py show-time --event sunrise`. Valid values for `--event` argument are `sunrise`, `noon`and `sunset`.
 
@@ -25,7 +25,7 @@ We relocated recently to a house which has a nice view to west, so every now and
 It is quite trivial to setup camera so that you can get a nice picture of [analemma](https://www.google.com/search?q=analemma&source=lnms&tbm=isch): just take picture at fixed time of day and stack the collected photos to show the annual movement of the sun in the sky. But what if you would like to take photo every day when sun is at specific elevation from horizon, such as just before sunset? What would the stacked-up photo look like? Some kind of horizontal analemma? How to schedule taking such pictures eg. using Raspberry Pi? I had find it out and came up with this script.
 
 ### Sunrise equation
-The code works by utilizing the sunrise equation described in [wikipedia](https://en.m.wikipedia.org/wiki/Sunrise_equation). I do not fully understand how the equation works, but it seems to work as intended, giving credible times for sunrise, noon and sunset. You can compare the [implementation](https://bitbucket.org/SirHegel77/sunsetcalculator/src/master/calc.py) to the equations in the wikipedia page - please let me know if you find any errors.
+The code works by utilizing the sunrise equation described in [wikipedia](https://en.m.wikipedia.org/wiki/Sunrise_equation). I do not fully understand how the equation works, but it seems to work as intended, giving credible times for sunrise, noon and sunset. You can compare the [implementation](https://github.com/heikkileivo/sunset/blob/master/calc.py) to the equations in the wikipedia page - please let me know if you find any errors.
 
 
 ## Instructions
@@ -34,7 +34,7 @@ The code works by utilizing the sunrise equation described in [wikipedia](https:
 
 ```bash
 
-~/ $ git clone git@bitbucket.org:SirHegel77/sunsetcalculator.git
+~/ $ git clone git@github.com:heikkileivo/sunset.git
 ~/ $ cd sunsetcalculator
 ~/sunsetcalculator $ cp sample_settings.py settings.py
 ```
