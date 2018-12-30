@@ -1,4 +1,4 @@
-# Sunset Calculator
+# Raspberry Pi - Sunset Photo Scheduler
 The intent of this project is to schedule Raspberry Pi to take photos of sunset every day so that sun is always at specific elevation from the horizon. When executed, the script schedules taking photos for today's sunrise, noon or sunset using _at_ command. Actual behavior is defined in settings. The [sample settings](https://github.com/heikkileivo/sunset/blob/master/sample_settings.py) show how to use this script with [raspistill](https://www.raspberrypi.org/documentation/usage/camera/raspicam/raspistill.md), but you can easily modify the settings to use some other tool to take the pictures.
   
 By default the resulting images are named so that the file name indicates the time offset in minutes relative to the event. For example, if the event being photographed is sunset, images name `20181229-10.jpg` and `20181229+10.jpg` have been taken 10 minutes before and 10 minutes after calculated sunset, respectively. This makes it easy to list or collect all images with same time offset to the event, eg. `ls /path/to/images/*-10.jpg` to list all images taken 10 minutes before calculated sunset.
