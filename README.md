@@ -46,7 +46,7 @@ The code works by utilizing the sunrise equation described in [wikipedia](https:
 Taking pictures is scheduled using _at_ command in linux. To schedule taking photo in an onliner, one can use the following command:
 
 ```bash
-~/ $ ehco "raspistill -o foo.jpg" | at 14:00
+~/ $ echo "raspistill -o foo.jpg" | at 14:00
 ```
 If you want to take a photo of sunset, one obvious problem arises: you usually want to take photos _before_ actual sunset, otherwise there is nothing much to see in the photos. Therefore the picture should actually be taken at specific offset relative to the observed event, eg. after sunrise or before sunset. To make it easier to find the best time offset, the script can be configured to take multiple photos with specific intervals, by default one minute. You can then look at the resulting images and collect the ones with same time offset, or change the settings to take pictures with narrower time window.
 
