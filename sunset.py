@@ -51,12 +51,17 @@ def show_time(args):
     print("Local {} is at {}".format(args.event, value))
 
 def collect_images(args):
-
+    """
+    Collect images with same index number to target directory.
+    Order collected files by date created and create symbolic link
+    for each file using numeric counter as filename.
+    """
     from settings import TARGET_DIRECTORY as source_dir # sic!
     if os.path.isdir(source_dir):
         if os.path.isdir(args.target) == False:
             os.makedirs(args.target)
         if args.purge:
+            # Remove old files in target directory
             g = glob(os.path.join(args.target, "*"))
             count = len(g)
             if count > 0: 
@@ -86,7 +91,7 @@ def main():
 
     # Define parser for show-time action
     subparser = subparsers.add_parser("show-time", 
-        help="Show time for specifi event.")
+        help="Show time for specific event.")
     subparser.add_argument('--event', required=True, type=str, choices=EVENTS,
         help="Defines event to be observed.")
     subparser.set_defaults(func=show_time)
