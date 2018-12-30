@@ -76,7 +76,7 @@ Commands are scheduled using at command in linux, so it needs to be installed fi
 ~/sunset $ sudo apt-get install at 
 ```
 
-I recommend using [virtualenv](https://virtualenv.pypa.io/en/latest/) so you don't need to install dependent python libraries systm-wide. 
+I recommend using [virtualenv](https://virtualenv.pypa.io/en/latest/) so you don't need to install dependent python libraries system-wide. 
 
 
 ```bash
