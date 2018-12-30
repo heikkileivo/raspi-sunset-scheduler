@@ -4,23 +4,35 @@ The intent of this project is to schedule Raspberry Pi to take photos of sunset 
 By default the resulting images are named so that the file name indicates the time offset in minutes relative to the event. For example, if the event being photographed is sunset, images name `20181229-10.jpg` and `20181229+10.jpg` have been taken 10 minutes before and 10 minutes after calculated sunset, respectively. This makes it easy to list or collect all images with same time offset to the event, eg. `ls /path/to/images/*-10.jpg` to list all images taken 10 minutes before calculated sunset.
 
 ## Quick instructions
-Read the detailed instructions below to set up the script before using. To show help for command line, run the script with -h parameter: `./sunset.py -h`. To show time for today's sunrise, start the script with `show-time` command: `./sunset.py show-time --event sunrise`. Valid values for `--event` argument are `sunrise`, `noon`and `sunset`.
+Read the detailed instructions below to set up the script before using. To show help for command line, run the script with -h parameter: 
+```bash
+(sunset) ~/sunset $ ./sunset.py -h
+```
+To show time for today's sunrise, start the script with `show-time` command: 
+```bash
+(sunset) ~/sunset $ ./sunset.py show-time --event sunrise
+Local sunset is at 2018-12-30 15:10:31.239491+02:00
+```
+Valid values for `--event` argument are `sunrise`, `noon`and `sunset`.
 
-To list commands for scheduling photographs, run the script with `run-commands` argument: `./sunset.py run-commands`. By default the commands are not executed, so you can easily verify correct behavior:
-
+To list commands for scheduling photographs, run the script with `run-commands` argument. By default the commands are not executed, so you can easily verify correct behavior:
 
 ```bash
 
-(sunset) pi@vadelma:~/sunsetcalculator $ ./sunset.py run-commands
-mkdir -p ~/sunset/2018
-echo "raspistill -o ~/sunset/2018/20181229-3.jpg -t 1 -n" | at 14:40
-echo "raspistill -o ~/sunset/2018/20181229-2.jpg -t 1 -n" | at 14:41
-echo "raspistill -o ~/sunset/2018/20181229-1.jpg -t 1 -n" | at 14:42
-echo "raspistill -o ~/sunset/2018/20181229+0.jpg -t 1 -n" | at 14:43
-echo "raspistill -o ~/sunset/2018/20181229+1.jpg -t 1 -n" | at 14:44
-echo "raspistill -o ~/sunset/2018/20181229+2.jpg -t 1 -n" | at 14:45
+(sunset) ~/sunset $ ./sunset.py run-commands
+mkdir -p ~/photos/sunset/2018
+echo "raspistill -o ~/photos/sunset/2018/20181229-3.jpg -t 1 -n" | at 14:40
+echo "raspistill -o ~/photos/sunset/2018/20181229-2.jpg -t 1 -n" | at 14:41
+echo "raspistill -o ~/photos/sunset/2018/20181229-1.jpg -t 1 -n" | at 14:42
+echo "raspistill -o ~/photos/sunset/2018/20181229+0.jpg -t 1 -n" | at 14:43
+echo "raspistill -o ~/photos/sunset/2018/20181229+1.jpg -t 1 -n" | at 14:44
+echo "raspistill -o ~/photos/sunset/2018/20181229+2.jpg -t 1 -n" | at 14:45
 ```
-To actually execute the commands and schedule them to be executed, use the `--execute` parameter: `./sunset.py run-commands --execute True`. To schedule taking photos each day, run sunset.py daily using cron.
+To actually execute the commands and schedule them to be executed, use the `--execute` parameter: 
+```bash
+(sunset) ~/sunset $ ./sunset.py run-commands --execute True`
+```
+To schedule taking photos each day, run sunset.py daily using cron.
 
 ## Background
 We relocated recently to a house which has a nice view to west, so every now and then we see a nice sunset in the evening. It is interesting to see the movement of the sun as time passes: during equinoxes the sun sets directly to west and during winter and summer solstices to southwest and northwest, respectively. It would be nice to take a photo of the sunset whenever it is not cloudy, but unfortunately it is not possible to be at home every sunny evening.
@@ -33,7 +45,7 @@ The code works by utilizing the sunrise equation described in [wikipedia](https:
 ### Scheduling commands
 Taking pictures is scheduled using _at_ command in linux. To schedule taking photo in an onliner, one can use the following command:
 
-```
+```bash
 ~/ $ ehco "raspistill -o foo.jpg" | at 14:00
 ```
 If you want to take a photo of sunset, one obvious problem arises: you usually want to take photos _before_ actual sunset, otherwise there is nothing much to see in the photos. Therefore the picture should actually be taken at specific offset relative to the observed event, eg. after sunrise or before sunset. To make it easier to find the best time offset, the script can be configured to take multiple photos with specific intervals, by default one minute. You can then look at the resulting images and collect the ones with same time offset, or change the settings to take pictures with narrower time window.
