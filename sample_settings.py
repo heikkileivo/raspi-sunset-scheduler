@@ -5,7 +5,7 @@ from calc import EVENT_SUNRISE, EVENT_NOON, EVENT_SUNSET
 # Define your target path here
 TARGET_DIRECTORY = '/path/to/your/photos/'
 # Define command to be executed
-COMMAND = "echo \"raspistill -o {0:s}/{1:%Y}{1:%m}{1:%d}{2:+d}.jpg -t 1 -n\" | at {1:%H}:{1:%M}"
+COMMAND = "echo \"raspistill -o {0:s}/{1:%Y}{1:%m}{1:%d}{2:+d}.jpg -t 1 -n\" | at {1:%H}:{1:%M} >/dev/null 2>&1"
 # Define your coordinates 
 LONGITUDE = 25.0
 LATITUDE = 60.0

@@ -30,7 +30,7 @@ echo "raspistill -o ~/photos/sunset/2018/20181229+2.jpg -t 1 -n" | at 14:45
 ```
 To actually execute the commands and schedule them to be executed, use the `--execute` parameter: 
 ```bash
-(sunset) ~/sunset $ ./sunset.py run-commands --execute True`
+(sunset) ~/sunset $ ./sunset.py run-commands --execute`
 ```
 To schedule taking photos each day, run sunset.py daily using cron.
 
@@ -124,7 +124,7 @@ To schedule the commands to be actually executed, add `--execute` argument:
 
 ```bash
 
-(sunset) ~/sunset $ ./sunset.py run-commands --execute True
+(sunset) ~/sunset $ ./sunset.py run-commands --execute
 ```
 
 Now your raspbery pi is scheduled to take pictures as specified in settings - for single time. To take pictures every day, you can use [cron](https://linuxconfig.org/linux-crontab-reference-guide) to run _sunset.py_ every day. Run `crontab -e` to edit your crontab, and add following line taking care to get your paths correct:
@@ -132,7 +132,7 @@ Now your raspbery pi is scheduled to take pictures as specified in settings - fo
 
 ```
 
-0 8 * * * /home/pi/virtualenvs/sunset/bin/python /home/pi/sunset/sunset.py run-commands --execute True
+0 8 * * * /home/pi/virtualenvs/sunset/bin/python /home/pi/sunset/sunset.py run-commands --execute
 ```
 
 Note that the second parameter (here 8) specifies the hour on which the script is executed. If you intend to take pictures of sunrise, make sure you run the script before sunrise, otherwise the pictures will be taken on next day! 
