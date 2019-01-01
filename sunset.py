@@ -57,33 +57,43 @@ def collect_images(args):
     for each file using numeric counter as filename.
     """
     from settings import TARGET_DIRECTORY as source_dir # sic!
+    target_dir = args.target if os.path.isabs(args.target) else os.path.join(source_dir, args.target)
     if os.path.isdir(source_dir):
-        if os.path.isdir(args.target) == False:
-            os.makedirs(args.target)
+        if os.path.isdir(target_dir) == False:
+            os.makedirs(target_dir)
         if args.purge:
             # Remove old files in target directory
-            g = glob(os.path.join(args.target, "*"))
+            g = glob(os.path.join(target_dir, "*"))
             count = len(g)
             if count > 0: 
                 if args.silent == False:
-                    print("All files in target directory {} will be deleted.")
+                    print("All files in target directory {} will be deleted.".format(
+                        target_dir))
                     print("Do you want to continue? (y/n)")
                     if input().lower() != 'y': 
                         print("Operation cancelled.")
                         return
                 for file in g:
                     os.remove(file)
-                print("Successfully created {} symlinks to {}.".format(count, args.target))
-            else:
-                print("No files found to be processed.")
 
         pattern = os.path.join(source_dir, args.subdir, "*{:+d}.jpg".format(args.offset))
         files = sorted(glob(pattern), key=os.path.getmtime)
-        for index, path in enumerate(files):
-            os.symlink(path, os.path.join(args.target, "{:d}.jpg".format(index)))
+        count = len(files)
+        perform_operation = shutil.copyfile if args.copy else os.symlink
+        if count > 0:
+            for index, path in enumerate(files):
+                target_path = os.path.join(target_dir, "{:d}.jpg".format(index))
+                print(target_path)
+                perform_operation(path, target_path)
+            if args.copy:
+                print("Successfully copied {} files to {}.".format(count, target_dir))
+            else:
+                print("Successfully created {} symlinks to {}.".format(count, target_dir))
+        else:
+            print("No files found to be processed.")
             
     else:
-        print("Source directory defined in settings does not exist.".format(TARGET_DIRECTORY))
+        print("Source directory defined in settings does not exist.".format(source_dir))
 
 def main():
     parser = argparse.ArgumentParser("Sunset Calculator")
@@ -100,7 +110,7 @@ def main():
     subparser = subparsers.add_parser("run-commands", 
         help="Run commands specified in settings.")
     subparser.set_defaults(func=run_commands)
-    subparser.add_argument('--execute', type=bool, 
+    subparser.add_argument('--execute', action='store_true',
         default=False, help="If set to True, execute commands using os.system.")
 
     # Define parser for collect-images action
@@ -113,10 +123,12 @@ def main():
         help="Target path for images.")
     subparser.add_argument('--subdir', type=str, required=False, default='', 
         help="Sub-directory to look for images.")
-    subparser.add_argument('--purge', type=bool, default=False, 
+    subparser.add_argument('--purge', action='store_true', 
         help="If set to True, remove old files before proceeding.")
-    subparser.add_argument('--silent', type=bool, default=False, 
+    subparser.add_argument('--silent', default=False, action='store_true',
         help="If set to True, do not ask for confirmation.")
+    subparser.add_argument('--copy', default=False, action='store_true', 
+        help="If set to True, copy files instead of creating symlink.")
 
     args = parser.parse_args()
 
